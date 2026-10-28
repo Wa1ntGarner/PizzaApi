@@ -49,57 +49,12 @@ PizzaApi.Tests/               — тестовый проект xUnit (12 тес
 * доставка бесплатна при сумме заказа от 1000 ₽, иначе 149 ₽;
 * цена пиццы копируется в позицию заказа и не меняется при изменении меню.
 
-## 🔌 Эндпоинты
-
-| Метод | Адрес | Доступ | Назначение |
-| --- | --- | --- | --- |
-| GET | `/api/pizzas?onlyAvailable=true` | анонимно | меню пиццерии |
-| GET | `/api/pizzas/{id}` | анонимно | одна пицца |
-| POST | `/api/pizzas` | требуется вход | добавить пиццу |
-| PATCH | `/api/pizzas/{id}/availability?isAvailable=false` | требуется вход | скрыть/вернуть пиццу |
-| GET | `/api/orders` | требуется вход | список заказов |
-| GET | `/api/orders/{id}` | требуется вход | один заказ |
-| POST | `/api/orders` | требуется вход | оформить заказ |
-
-Так как cookie настроен без перенаправлений, неаутентифицированный запрос к
-`/api/orders` возвращает **401**, а при нехватке прав — **403**.
-Методы регистрации, входа и выхода, а также роли реализуются на следующем этапе.
 
 ## ⚙️ Настройка и запуск
 
 1. Убедитесь, что установлены .NET SDK 10 и SQL Server (подойдёт LocalDB).
 2. Строка подключения находится в `pizza/appsettings.json`:
-
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=PizzaApiDb;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True;"
-}
-```
-
-Если на машине установлен полноценный экземпляр SQL Server, замените сервер на
-`Server=localhost;` — остальные параметры остаются прежними.
-Оба контекста используют одно и то же подключение, но наборы миграций у них разные.
-
-3. Примените миграции (проект по умолчанию — `pizza`):
-
-```powershell
-Add-Migration InitialIdentity -Context AuthDbContext -OutputDir Data/Migrations/Auth
-Update-Database -Context AuthDbContext
-
-Add-Migration InitialCreate -Context AppDbContext -OutputDir Data/Migrations/App
-Update-Database -Context AppDbContext
-```
-
-Те же действия через CLI:
-
-```powershell
-dotnet ef database update --context AuthDbContext --project pizza
-dotnet ef database update --context AppDbContext --project pizza
-```
-
-В базе `PizzaApiDb` появятся таблицы Identity (`AspNetUsers`, `AspNetRoles` и др.)
-и таблицы предметной области (`Pizzas`, `Orders`, `OrderItems`) с начальным меню.
-
+3. Примените миграции:
 4. Запуск API (профиль `http`, HTTPS отключён):
 
 ```powershell
